@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --accent: #fd79a8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--light);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background-color: rgba(45, 52, 54, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+        
+        h1 {
+            color: var(--accent);
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .input-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        select {
+            background-color: var(--dark);
+            color: var(--light);
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        select:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(253, 121, 168, 0.3);
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: #e84393;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .result-container {
+            background-color: rgba(108, 92, 231, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+        
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid rgba(165, 165, 165, 0.2);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .result-value {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        .dynamic-value {
+            color: #00cec9;
+            animation: pulse 1s infinite alternate;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            from { opacity: 0.8; }
+            to { opacity: 1; text-shadow: 0 0 5px #00cec9; }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="floating">📅 Age Calculator</h1>
+        
+        <div class="input-group">
+            <select id="day" required>
+                <option value="" disabled selected>Day</option>
+                <!-- Days will be populated by JavaScript -->
+            </select>
+            
+            <select id="month" required>
+                <option value="" disabled selected>Month</option>
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+            
+            <select id="year" required>
+                <option value="" disabled selected>Year</option>
+                <!-- Years will be populated by JavaScript -->
+            </select>
+        </div>
+        
+        <button id="calculate-btn">Calculate Age</button>
+        
+        <div class="result-container" id="result-container">
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">🎂</span> Your Age:</span>
+                <span class="result-value" id="age-years"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">🗓️</span> Age in Months:</span>
+                <span class="result-value" id="age-months"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">📆</span> Age in Weeks:</span>
+                <span class="result-value" id="age-weeks"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">⏳</span> Age in Days:</span>
+                <span class="result-value" id="age-days"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">⏰</span> Age in Hours:</span>
+                <span class="result-value" id="age-hours"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">⌛</span> Age in Minutes:</span>
+                <span class="result-value" id="age-minutes"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">⚡</span> Age in Seconds:</span>
+                <span class="result-value dynamic-value" id="age-seconds"></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label"><span class="emoji">🎉</span> Days Until Next Birthday:</span>
+                <span class="result-value" id="next-birthday"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Populate days dropdown (1-31)
+        const daySelect = document.getElementById('day');
+        for (let i = 1; i <= 31; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            daySelect.appendChild(option);
+        }
+        
+        // Populate years dropdown (1900-current year)
+        const yearSelect = document.getElementById('year');
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear; i >= 1900; i--) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            yearSelect.appendChild(option);
+        }
+        
+        // Calculate age when button is clicked
+        document.getElementById('calculate-btn').addEventListener('click', calculateAge);
+        
+        function calculateAge() {
+            const day = parseInt(document.getElementById('day').value);
+            const month = parseInt(document.getElementById('month').value);
+            const year = parseInt(document.getElementById('year').value);
+            
+            if (isNaN(day) || isNaN(month) || isNaN(year)) {
+                alert('Please select a valid date');
+                return;
+            }
+            
+            const birthDate = new Date(year, month, day);
+            const today = new Date();
+            
+            // Validate date
+            if (birthDate > today) {
+                alert('Birth date cannot be in the future');
+                return;
+            }
+            
+            // Calculate age
+            let ageYears = today.getFullYear() - birthDate.getFullYear();
+            let ageMonths = today.getMonth() - birthDate.getMonth();
+            let ageDays = today.getDate() - birthDate.getDate();
+            
+            if (ageDays < 0) {
+                ageMonths--;
+                // Get the last day of the previous month
+                const lastDayOfMonth = new Date(
+                    today.getFullYear(), 
+                    today.getMonth(), 
+                    0
+                ).getDate();
+                ageDays += lastDayOfMonth;
+            }
+            
+            if (ageMonths < 0) {
+                ageYears--;
+                ageMonths += 12;
+            }
+            
+            // Calculate total months
+            const totalMonths = ageYears * 12 + ageMonths;
+            
+            // Calculate total days
+            const diffTime = Math.abs(today - birthDate);
+            const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Calculate total weeks
+            const totalWeeks = Math.floor(totalDays / 7);
+            const remainingDays = totalDays % 7;
+            
+            // Calculate total hours, minutes, seconds
+            const totalHours = totalDays * 24;
+            const totalMinutes = totalHours * 60;
+            let totalSeconds = totalMinutes * 60;
+            
+            // Calculate next birthday
+            const nextBirthday = new Date(
+                today.getFullYear(), 
+                month, 
+                day
+            );
+            
+            if (nextBirthday < today) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            
+            const daysUntilNextBirthday = Math.ceil(
+                (nextBirthday - today) / (1000 * 60 * 60 * 24)
+            );
+            
+            // Display results
+            document.getElementById('age-years').textContent = `${ageYears} years ${ageMonths} months ${ageDays} days`;
+            document.getElementById('age-months').textContent = `${totalMonths} months ${ageDays} days`;
+            document.getElementById('age-weeks').textContent = `${totalWeeks} weeks ${remainingDays} days`;
+            document.getElementById('age-days').textContent = `${totalDays} days`;
+            document.getElementById('age-hours').textContent = `${totalHours} hours`;
+            document.getElementById('age-minutes').textContent = `${totalMinutes} minutes`;
+            document.getElementById('age-seconds').textContent = `${totalSeconds} seconds`;
+            document.getElementById('next-birthday').textContent = `${daysUntilNextBirthday} days`;
+            
+            // Show results container
+            document.getElementById('result-container').style.display = 'block';
+            
+            // Update seconds in real time
+            if (window.secondsInterval) {
+                clearInterval(window.secondsInterval);
+            }
+            
+            window.secondsInterval = setInterval(() => {
+                totalSeconds++;
+                document.getElementById('age-seconds').textContent = `${totalSeconds} seconds`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
